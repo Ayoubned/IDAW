@@ -41,6 +41,7 @@ body {
 }
 
 .menu {
+    font-size: x-large;
     width: 200px;
     background-color: #2a9d8f; 
     padding: 20px;
@@ -52,16 +53,39 @@ body {
 }
 
 .menu ul li {
-    margin-bottom: 15px;
+    margin-top: 30px;
+    margin-bottom: 35px;
 }
 
 .menu ul li a {
     text-decoration: none;
     color: white;
     font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
 }
 
+.menu ul li a:hover {
+    background-color: #264653;
+    color: #f4a261;
+}
+
+.menu ul li a:active {
+    background-color: #e76f51;
+    color: white;
+}
+
+/* Active class to highlight the current page */
+.menu ul li a.active {
+    background-color: #e76f51; /* Keeps the background highlighted */
+    color: white; /* Ensure text color remains white */
+}
+
+
 .content {
+    font-size: xx-large;
     flex-grow: 1;
     display: flex;
     justify-content: center;
