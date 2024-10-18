@@ -76,7 +76,25 @@
         </tbody>
     </table>
     <script>
+        function editRow(link) {
+            let row = $(link).closest("tr");
+            let nom = row.find("td").eq(0).text();
+            let prenom = row.find("td").eq(1).text();
+            let dateNaissance = row.find("td").eq(2).text();
+            let aimeCours = row.find("td").eq(3).text() === 'Oui';
+            let remarques = row.find("td").eq(4).text();
 
+            $("#inputNom").val(nom);
+            $("#inputPrenom").val(prenom);
+            $("#inputDateNaissance").val(dateNaissance);
+            $("#inputAimeCours").prop("checked", aimeCours);
+            $("#inputRemarques").val(remarques);
+
+            $("#addStudentForm").data("editRow", row);
+        }
+        function deleteRow(link) {
+            $(link).closest("tr").remove();
+        }
         function onFormSubmit() {
             event.preventDefault();
 
@@ -86,7 +104,19 @@
             let aimeCours = $("#inputAimeCours").is(':checked') ? 'Oui' : 'Non';
             let remarques = $("#inputRemarques").val();
 
-            $("#studentsTableBody").append(`<tr>
+            let editRow = $("#addStudentForm").data("editRow");
+
+            if (editRow) {
+                editRow.find("td").eq(0).text(nom);
+                editRow.find("td").eq(1).text(prenom);
+                editRow.find("td").eq(2).text(dateNaissance);
+                editRow.find("td").eq(3).text(aimeCours);
+                editRow.find("td").eq(4).text(remarques);
+
+                $("#addStudentForm").removeData("editRow");
+                $("#addStudentForm")[0].reset();
+            } else {
+                $("#studentsTableBody").append(`<tr>
             <td>${nom}</td>
             <td>${prenom}</td>
             <td>${dateNaissance}</td>
@@ -97,9 +127,9 @@
                 <a href="#" onclick="deleteRow(this)">Delete</a>
             </td>
         </tr>`);
-            $("#addStudentForm")[0].reset();
+                $("#addStudentForm")[0].reset();
+            }
         }
-
     </script>
 </body>
 
