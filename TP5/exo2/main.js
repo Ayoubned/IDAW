@@ -1,7 +1,9 @@
+let prefix = 'http://localhost/IDAW/TP4/';
+
 $(document).ready(function () {
     var table = $('#usersTable').DataTable({
         ajax: {
-            url: 'http://localhost/IDAW/TP4/REST_users.php',
+            url: `${prefix}REST_users.php`,
             dataSrc: ''
         },
         columns: [
@@ -26,7 +28,7 @@ $(document).ready(function () {
         var email = $('#email').val();
 
         $.ajax({
-            url: 'http://localhost/IDAW/TP4/REST_users.php',
+            url: `${prefix}REST_users.php`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({ name: name, email: email }),
@@ -44,7 +46,7 @@ $(document).ready(function () {
         var userId = $(this).data('id');
 
         $.ajax({
-            url: `http://localhost/IDAW/TP4/REST_users.php?id=${userId}`,
+            url: `${prefix}REST_users.php?id=${userId}`,
             type: 'DELETE',
             success: function (response) {
                 alert('Utilisateur supprimé');
@@ -62,7 +64,7 @@ $(document).ready(function () {
         var newEmail = prompt('Entrez le nouvel email');
 
         $.ajax({
-            url: `http://localhost/IDAW/TP4/REST_users.php?id=${userId}`,
+            url: `${prefix}REST_users.php?id=${userId}`,
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify({ name: newName, email: newEmail }),
