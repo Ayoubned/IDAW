@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USD Exchange Rates Visualization</title>
+    <style>
+        .bar {
+            fill: steelblue;
+        }
+        .bar:hover {
+            fill: orange;
+        }
+        .axis-label {
+            font-size: 12px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h1>USD Exchange Rates Visualization</h1>
+    <svg id="chart" width="800" height="500"></svg>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        async function fetchData() {
+            const apiUrl = 'https://api.exchangerate-api.com/v4/latest/USD';
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                processAndVisualizeData(data);
+            } catch (error) {
+                console.error('Error fetching the data:', error);
+            }
+        }
+
+        function processAndVisualizeData(data) {
+            const rates = data.rates;
+            const processedData = Object.entries(rates).map(([currency, rate]) => {
+                return {
+                    currency: currency,
+                    rate: rate
+                };
+            });
+
+            processedData.sort((a, b) => b.rate - a.rate);
+
+            const topCurrencies = processedData.slice(0, 20);
+
+            visualizeData(topCurrencies);
+        }
+
+        function visualizeData(data) {
+            const margin = { top: 20, right: 30, bottom: 40, left: 90 },
+                width = 800 - margin.left - margin.right,
+                height = 500 - margin.top - margin.bottom;
+
+            const svg = d3.select("#chart")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            const x = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.rate)]) 
+                .range([0, width]);
+
+            const y = d3.scaleBand()
+                .domain(data.map(d => d.currency))
+                .range([0, height])
+                .padding(0.1);
+
+            svg.selectAll(".bar")
+                .data(data)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", 0)
+                .attr("y", d => y(d.currency))
+                .attr("width", d => x(d.rate))
+                .attr("height", y.bandwidth());
+
+            svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x).ticks(5))
+                .append("text")
+                .attr("y", 35)
+                .attr("x", width / 2)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .text("Exchange Rate");
+
+            svg.append("g")
+                .call(d3.axisLeft(y))
+                .append("text")
+                .attr("y", -10)
+                .attr("x", -40)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .text("Currency");
+
+            svg.selectAll(".bar")
+                .on("mouseover", function(event, d) {
+                    d3.select(this).style("fill", "orange");
+                })
+                .on("mouseout", function(event, d) {
+                    d3.select(this).style("fill", "steelblue");
+                });
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
